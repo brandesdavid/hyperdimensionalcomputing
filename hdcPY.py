@@ -2,40 +2,58 @@
 
 import numpy as np
 
-class HDC:
-    # this creates a bipolar vector of size n
-    def generate(N, empty=False):
+class HDV:
+    def __init__(self, N, empty=False):
+        self.N = N
         if empty:
-            return np.zeros(N)
+            self.hdv = np.zeros(N)
         else:
-            return np.random.choice([-1, 1], size=N)
-
-    # creates a matrix of hypervectors 
-    def HDV(rowSize, N):
-        return np.random.choice([-1, 1], size=(rowSize, N))
-
-    # this compares two bipolar vectors and returns the number of matching elements
-    # it should be equal to about n/2
-    def compare(a, b):
-        return (a == b).sum()
-
-    # produce a new vector that is dissimilar to the original
-    def Bind(a, b):
-        return a * b
-
-    def Bundle(a, b):
-        return np.sign(a + b)
-
-    # create a new vector through shifting, to
-    def Shift(hdv, shift=1):
-        return np.roll(hdv, shift)
-
-    # check the similarity of two hypervectors   
-    def cosine_similarity(a, b):
-        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+            self.hdv = np.random.choice([-1, 1], size=N)
     
+    def compare(self, other):
+        return (self.hdv == other.hdv).sum()
+    
+    def Bind(self, other):
+        self.hdv = self.hdv * other.hdv
+
+    def Bundle(self, other):
+        self.hdv = np.sign(self.hdv + other.hdv)
+
+    def Shift(self, shift=1):
+        self.hdv = np.roll(self.hdv, shift)
+
+    def cosine_similarity(self, other):
+        return np.dot(self.hdv, other.hdv) / (np.linalg.norm(self.hdv) * np.linalg.norm(other.hdv))
 
 
+
+def generateHDV(N, empty=False):
+    if empty:
+        return np.zeros(N)
+    else:
+        return np.random.choice([0, 1], size=N)
+
+# produce a new vector that is dissimilar to the original
+def Bind(a, b):
+    return a * b
+
+# bundle two vectors together
+def Bundle(a, b):
+    sum = a + b
+    return np.sign(sum)
+
+# check the similarity of two hypervectors   
+def cosine_similarity(a, b):
+    dot_product = np.dot(a, b)
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    return dot_product / (norm_a * norm_b)
+    
+def Shift(a, shift=1):
+    return np.roll(a, shift)
+
+def compare(a, b):
+    return (a == b).sum()
 
 
 # def print():
