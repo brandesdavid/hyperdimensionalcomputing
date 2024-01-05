@@ -15,14 +15,14 @@ def encodeAlphabet():
     
     alphabet = np.array(list(vars.values()))
 
-    np.savetxt('alphabet.txt', alphabet, fmt='%u')
+    np.savetxt('python/txt/alphabet.txt', alphabet, fmt='%u')
 
     print("saved alphabet to alphabet.txt")
 
     return vars
 
 def loadAlphabet():
-    alphabet = np.loadtxt('alphabet.txt')
+    alphabet = np.loadtxt('python/txt/alphabet.txt')
     vars = {}
     i = 0
     for letter in map(chr, range(ord('a'), ord('z')+1)):
@@ -70,9 +70,9 @@ def encodeSample(file_path, num_words=None):
 # lang = encodeSample('fr.txt')
 # np.savetxt('vec_fr.txt', lang, fmt='%u')
 
-french = np.loadtxt('vec_fr.txt')
-english = np.loadtxt('vec_en.txt')
+french = np.loadtxt('python/txt/vec_fr.txt')
+english = np.loadtxt('python/txt/vec_en.txt')
 
-test = encodeSample('test.txt')
+test = encodeSample('python/txt/test.txt')
 print("test and english", cosine_similarity(test, english))
 print("test and french", cosine_similarity(test, french))
