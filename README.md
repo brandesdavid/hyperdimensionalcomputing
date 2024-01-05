@@ -33,7 +33,7 @@ like position in an alphabet based on the parent vector.
 ## example
 
 in this repo, i've created a small languageguesser program (that kind of works).
-it is based on this [stanford presentation](https://web.stanford.edu/class/ee380/Abstracts/171025-slides.pdf)
+it is based from this [UC Berkeley stanford presentation](https://web.stanford.edu/class/ee380/Abstracts/171025-slides.pdf)
 
 we read through a training data (en.txt) and cycle every trigram.
 `hello` = `hel` + `ell` + `llo`.
