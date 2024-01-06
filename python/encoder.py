@@ -54,25 +54,28 @@ def encodeSample(file_path, num_words=None):
                 second = Shift(vars[trigram[1]], 1)
                 third = vars[trigram[2]]
                 
+                
                 trigramSum = Bind(Bind(first, second), third)
-
+                print(trigramSum)
+        
                 language = Bundle(language, trigramSum)
+                
             word_count += 1
+    print(language)
     return language
 
 
 # saving english
-# lang = encodeSample('en.txt')
-# np.savetxt('vec_en.txt', lang, fmt='%u')
-
+english = encodeSample('python/txt/en.txt', 1000)
+np.savetxt('vec_en.txt', english, fmt='%u')
 
 # saving french
-# lang = encodeSample('fr.txt')
-# np.savetxt('vec_fr.txt', lang, fmt='%u')
+french = encodeSample('python/txt/fr.txt', 1000)
+np.savetxt('vec_fr.txt', french, fmt='%u')
 
-french = np.loadtxt('python/txt/vec_fr.txt')
-english = np.loadtxt('python/txt/vec_en.txt')
+# french = np.loadtxt('python/txt/vec_fr.txt')
+# english = np.loadtxt('python/txt/vec_en.txt')
 
 test = encodeSample('python/txt/test.txt')
-print("test and english", cosine_similarity(test, english))
+print("test and english", cosine_similarity(french, english))
 print("test and french", cosine_similarity(test, french))

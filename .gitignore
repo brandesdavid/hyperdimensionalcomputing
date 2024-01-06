@@ -2,3 +2,5 @@ __pycache__/
 .vscode/settings.json
 .vscode/tasks.json
 c/languageGuesser
+.DS_Store
+c/.DS_Store

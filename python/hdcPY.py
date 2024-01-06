@@ -31,7 +31,7 @@ def generateHDV(N, empty=False):
     if empty:
         return np.zeros(N)
     else:
-        return np.random.choice([0, 1], size=N)
+        return np.random.choice([-1, 1], size=N)
 
 # produce a new vector that is dissimilar to the original
 def Bind(a, b):
@@ -40,7 +40,10 @@ def Bind(a, b):
 # bundle two vectors together
 def Bundle(a, b):
     sum = a + b
-    return np.sign(sum)
+    return sum
+
+def Quantize(a):
+    return a-1
 
 # check the similarity of two hypervectors   
 def cosine_similarity(a, b):
@@ -55,6 +58,16 @@ def Shift(a, shift=1):
 def compare(a, b):
     return (a == b).sum()
 
+x = generateHDV(5)
+y = generateHDV(5)
+
+print("x:              ", x)
+print("y:              ", y)
+
+y = Bundle(x, y)   
+print("bundling:       ", y)
+y = Quantize(y)
+print("quantizing:     ", y)
 
 # def print():
 #     x = generateHDV(N)

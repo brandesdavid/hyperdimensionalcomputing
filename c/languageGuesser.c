@@ -2,156 +2,84 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "hdcLib.c"
-
-#define DIMENSION 10000
-#define N 10000
-#define MAX_WORD_LENGTH 100
-
-BipolarVector vars[27]; // Assuming we have a bipolar vector for each letter and space
+#include "languageEncoder.c"
 
 // run this code with
 // > clang -std=c11 -Wall languageGuesser.c -o languageGuesser && ./languageGuesser
 
 
-
-
-
-void encodeAlphabet() {
-    // Generate HDV for each letter and space
-    for (int i = 0; i < 27; i++) {
-        vars[i] = createRandomBipolarVector();
-    }
-
-    // Save to file
-    FILE *file = fopen("./txt/alphabet.txt", "w");
-    if (file == NULL) {
-        printf("Could not open file alphabet.txt\n");
-        return;
-    }
-    for (int i = 0; i < 27; i++) {
-        for (int j = 0; j < N; j++) {
-            fprintf(file, "%d ", vars[i].vector[j]);
-        }
-        fprintf(file, "\n");
-    }
-    fclose(file);
-
-    printf("Saved alphabet to alphabet.txt\n");
-}
-
-void loadAlphabet() {
-    // Load from file
-    FILE *file = fopen("./txt/alphabet.txt", "r");
-    if (file == NULL) {
-        printf("Could not open file alphabet.txt\n");
-        return;
-    }
-    for (int i = 0; i < 27; i++) {
-        for (int j = 0; j < N; j++) {
-            fscanf(file, "%d", &vars[i].vector[j]);
-        }
-    }
-    fclose(file);
-}
-
-BipolarVector encodeSample(const char *file_path, int max_words) {
-    loadAlphabet();
-
-    BipolarVector language = createEmptyBipolarVector();
-    int word_count = 0;
-
-    FILE *file = fopen(file_path, "r");
-    if (file == NULL) {
-        printf("Could not open file %s\n", file_path);
-        return language;
-    }
-
-    char word[MAX_WORD_LENGTH];
-    while (fscanf(file, "%s", word) != EOF && word_count < max_words) {
-        int word_length = strlen(word);
-        for (int i = 0; i < word_length - 2; i++) {
-            BipolarVector first = rotateBipolarVector(vars[word[i] - 'a'], 2);
-            BipolarVector second = rotateBipolarVector(vars[word[i + 1] - 'a'], 1);
-            BipolarVector third = vars[word[i + 2] - 'a'];
-
-            BipolarVector trigramSum = bindBipolarVectors(bindBipolarVectors(first, second), third);
-
-            language = bundleBipolarVectors(language, trigramSum);
-        }
-        word_count++;
-    }
-
-    fclose(file);
-
-    return language;
-}
-void saveBipolarVectorToFile(BipolarVector vector, const char *file_path) {
-    FILE *file = fopen(file_path, "w");
-    if (file == NULL) {
-        printf("Could not open file %s\n", file_path);
-        return;
-    }
-
-    for (int i = 0; i < DIMENSION; i++) {
-        fprintf(file, "%d\n", vector.vector[i]);
-    }
-
-    fclose(file);
-}
-
-BipolarVector loadBipolarVectorFromFile(const char *file_path) {
-    BipolarVector vector = createEmptyBipolarVector();
-
-    FILE *file = fopen(file_path, "r");
-    if (file == NULL) {
-        printf("Could not open file %s\n", file_path);
-        return vector;
-    }
-
-    for (int i = 0; i < DIMENSION; i++) {
-        fscanf(file, "%d", &vector.vector[i]);
-    }
-
-    fclose(file);
-
-    return vector;
-}
-
 int main() {
     srand(time(NULL));
-
-    // saving the the languages
-
-    BipolarVector english = encodeSample("./txt/en.txt", 1000);
-    saveBipolarVectorToFile(english, "en_vec.txt");
-    BipolarVector french = encodeSample("./txt/fr.txt", 500);
-    saveBipolarVectorToFile(french, "fr_vec.txt");
     
-    // BipolarVector english = loadBipolarVectorFromFile("./txt/en_vec.txt");
-    // BipolarVector french = loadBipolarVectorFromFile("./txt/fr_vec.txt");
+    BipolarVector english_encoded = encodeSample("./training/eng.txt");
+    saveBipolarVectorToFile(english_encoded, "./encoded/english.txt");
 
-    BipolarVector test = encodeSample("./txt/test.txt",999);
+    BipolarVector deutsch_encoded = encodeSample("./training/deu.txt");
+    saveBipolarVectorToFile(deutsch_encoded, "./encoded/deutsch.txt");
 
-    double cosineSimilarityFR = cosineSimilarityBinary(test, french);
-    double cosineSimilarityEN = cosineSimilarityBipolar(test, english);
+    BipolarVector italian_encoded  = encodeSample("./training/ita.txt");
+    saveBipolarVectorToFile(italian_encoded , "./encoded/italian.txt");
+
+    BipolarVector french_encoded  = encodeSample("./training/fra.txt");
+    saveBipolarVectorToFile(french_encoded , "./encoded/french.txt");
 
 
-    printf("Cosine similarity with French: %f\n", cosineSimilarityFR);
-    printf("Cosine similarity with English: %f\n", cosineSimilarityEN);
+    BipolarVector english_test_encoded = encodeSample("./testing/eng.txt");
+    saveBipolarVectorToFile(english_test_encoded, "./test_encoded/eng.txt");
 
-    if (cosineSimilarityFR > cosineSimilarityEN) {
-        printf("The text is in French\n");
-    } else {
-        printf("The text is in English\n");
-    }
+    BipolarVector deutsch_test_encoded = encodeSample("./testing/deu.txt");
+    saveBipolarVectorToFile(deutsch_test_encoded, "./test_encoded/deu.txt");
 
-    // double hammingBipolarDistanceFR = hammingBipolarDistance(test, french);
-    // double hammingBipolarDistanceEN = hammingBipolarDistance(test, english);
+    BipolarVector italian_test_encoded  = encodeSample("./testing/ita.txt");
+    saveBipolarVectorToFile(italian_test_encoded , "./test_encoded/ita.txt");
 
-    // puts("");
-    // printf("Hamming distance with French: %f\n", hammingBipolarDistanceFR);
-    // printf("Hamming distance with English: %f\n", hammingBipolarDistanceEN);
+    BipolarVector french_test_encoded  = encodeSample("./testing/fra.txt");
+    saveBipolarVectorToFile(french_test_encoded , "./test_encoded/fra.txt");
+
+    BipolarVector english = loadBipolarVectorFromFile("./encoded/english.txt");
+    BipolarVector deutsch = loadBipolarVectorFromFile("./encoded/deutsch.txt");
+    BipolarVector italian = loadBipolarVectorFromFile("./encoded/italian.txt");
+    BipolarVector french = loadBipolarVectorFromFile("./encoded/french.txt");
+
+    BipolarVector english_test = loadBipolarVectorFromFile("./test_encoded/eng.txt");
+    BipolarVector deutsch_test = loadBipolarVectorFromFile("./test_encoded/deu.txt");
+    BipolarVector italian_test = loadBipolarVectorFromFile("./test_encoded/ita.txt");
+    BipolarVector french_test = loadBipolarVectorFromFile("./test_encoded/fra.txt");
+
+   
+    double similarityEN = cosineSimilarityBipolar(english_test, english);
+    double similarityDE = cosineSimilarityBipolar(deutsch_test, deutsch);
+    double similarityENDE = cosineSimilarityBipolar(english_test, deutsch);
+    double similarityIT = cosineSimilarityBipolar(italian_test, italian);
+    double similarityFR = cosineSimilarityBipolar(french_test, french);
+    double similarityITFR = cosineSimilarityBipolar(italian_test, french);
+
+    double similarityENIT = cosineSimilarityBipolar(english_test, italian);
+    double similarityENFR = cosineSimilarityBipolar(english_test, french);
+    double similarityDEIT = cosineSimilarityBipolar(deutsch_test, italian);
+    double similarityDEFR = cosineSimilarityBipolar(deutsch_test, french);
+
+
+    printf("en - en:  %f \n", similarityEN);
+    printf("en - it:  %f \n", similarityENIT);
+    printf("en - fr:  %f \n", similarityENFR);
+    printf("en - de:  %f \n", similarityENDE);
+
+    printf("de - de:  %f \n", similarityDE);
+    printf("de - it:  %f \n", similarityDEIT);
+    printf("de - fr:  %f \n", similarityDEFR);
+
+    printf("it - it:  %f \n", similarityIT);
+    printf("it - fr:  %f \n", similarityITFR);
+     printf("fr - fr:  %f \n", similarityFR);
+
+
+   
+   
+    
+
+
+
 
     return 0;
 }
