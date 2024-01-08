@@ -1,3 +1,7 @@
+# setup
+
+install numpy and run languagerecognizer.py
+
 # hyperdimensional computing in c and python
 
 small library in python and c for hypervectors:
