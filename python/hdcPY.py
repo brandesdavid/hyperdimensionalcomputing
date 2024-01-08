@@ -8,7 +8,7 @@ def generate_random_vector(vector_size, empty=False):
         random_vector = np.zeros(vector_size)
     else:
         random_vector = np.random.choice([-1, 1], vector_size)
-        print(random_vector)
+       #  print(random_vector)
     return random_vector
 
 def bind(vector_a, vector_b):
@@ -25,6 +25,7 @@ def normalize(vector):
     # L2 normalization (Euclidean normalization)
     norm = np.linalg.norm(vector)
     normalized_vector = vector / norm
+    print(norm)
     return normalized_vector
 
 def clip(vector, min_value=-1, max_value=1):
@@ -44,6 +45,3 @@ def cosine_similarity(a, b):
     else:
         return dot(a, b)/(norm(a)*norm(b))
     
-x = generate_random_vector(10000)
-y = generate_random_vector(10000)
-

@@ -1,5 +1,6 @@
 from hdcPY import *
 import numpy as np
+import pandas as pd
 
 N = 10000
 
@@ -34,21 +35,26 @@ def loadAlphabet():
 
     return vars
 
+
 def encodeSample(file_path, num_words=None):
     vars = loadAlphabet()
     
-    language = []
+    language = generate_random_vector(N, empty=True)
     word_count = 0
 
+    
 
 
     with open(file_path, 'r') as file:
         text = file.read().replace('\n', '')
         words = text.split()
         progress = 0
+
         for word in words:
+
             if num_words is not None and word_count >= num_words:
                 break
+
             for i in range(len(word) - 2):
                 trigram = word[i:i+3]
 
@@ -61,14 +67,27 @@ def encodeSample(file_path, num_words=None):
                 trigramSum = bind(first, second)
                 trigramSum = bind(trigramSum, third)
 
-                language.append(trigramSum) 
+                language = bundle([language, trigramSum])
 
             word_count += 1
             progress += 1
             print(f"progress of {file_path}: " + str(progress) + "/" + str(len(words)))
-    language = np.array(language)
-    language = bundle(language)
+            
+    print("done encoding " + file_path)
+    
+   
     
     return normalize(language)
 
 
+# x = generate_random_vector(N, empty=True)
+# y = generate_random_vector(N, empty=False)
+# z = generate_random_vector(N, empty=False)
+
+# x = np.row_stack((x,y ))
+# x = np.row_stack((x,z))
+
+
+# print(x)
+# x = bundle(x)
+# print(x)
