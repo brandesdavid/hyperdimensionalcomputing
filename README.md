@@ -45,3 +45,42 @@ the final hypervector represents our language, or the training text, that has be
 by using the cosine similarity to another vector with this language vector and others, we can infer which
 result is closer to 1. 
 
+# results
+
+this is the output from the tests and their language vectors.
+it is pretty accurate, i think. 
+take a look at the similarities in the tests and their designated languages.
+
+french and italian score higher in closeness, as one could
+infer from their roots.
+```
+english_test and english:  0.93
+english_test and french:  0.51
+english_test and german:  0.30
+english_test and spanish:  0.43
+english_test and italian:  0.43
+
+french_test and english:  0.42
+french_test and french:  0.94
+french_test and german:  0.32
+french_test and spanish:  0.62
+french_test and italian:  0.55
+
+german_test and english:  0.30
+german_test and french:  0.36
+german_test and german:  0.96
+german_test and spanish:  0.29
+german_test and italian:  0.33
+
+spanish_test and english:  0.37
+spanish_test and french:  0.62
+spanish_test and german:  0.28
+spanish_test and spanish:  0.95
+spanish_test and italian:  0.63
+
+italian_test and english:  0.40
+italian_test and french:  0.60
+italian_test and german:  0.33
+italian_test and spanish:  0.66
+italian_test and italian:  0.94
+```

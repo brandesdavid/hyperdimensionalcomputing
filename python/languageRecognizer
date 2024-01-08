@@ -1,0 +1,85 @@
+import numpy as np
+import concurrent.futures
+from hdcPY import *
+from encoder import *
+
+
+
+LENGTH = None
+
+def encode_and_save_sample(file_path, save_path):
+    language = encodeSample(file_path, LENGTH)
+    np.savetxt(save_path, language, fmt='%f')
+
+
+def encodeTraining():
+    # # encoding all languages
+    # english_training = encodeSample('python/training/eng.txt', LENGTH)
+    # np.savetxt('python/encoded/vec_en.txt', english_training, fmt='%f')
+
+    
+    # french_training = encodeSample('python/training/fra.txt', LENGTH)
+    # np.savetxt('python/encoded/vec_fr.txt', french_training, fmt='%f')
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        futures.append(executor.submit(encode_and_save_sample, 'python/training/eng.txt', 'python/encoded/vec_en.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/training/fra.txt', 'python/encoded/vec_fr.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/training/deu.txt', 'python/encoded/vec_deu.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/training/spa.txt', 'python/encoded/vec_spa.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/training/ita.txt', 'python/encoded/vec_ita.txt'))
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"Exception occurred: {e}")
+
+def encodeTesting():
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        futures.append(executor.submit(encode_and_save_sample, 'python/testing/eng.txt', 'python/encoded/vec_en_test.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/testing/fra.txt', 'python/encoded/vec_fr_test.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/testing/deu.txt', 'python/encoded/vec_deu_test.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/testing/spa.txt', 'python/encoded/vec_spa_test.txt'))
+        futures.append(executor.submit(encode_and_save_sample, 'python/testing/ita.txt', 'python/encoded/vec_ita_test.txt'))
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"Exception occurred: {e}")
+
+def testing():
+
+
+    languages = {
+        'english': np.loadtxt('python/encoded/vec_en.txt'),
+        'french': np.loadtxt('python/encoded/vec_fr.txt'),
+        'german': np.loadtxt('python/encoded/vec_deu.txt'),
+        'spanish': np.loadtxt('python/encoded/vec_spa.txt'),
+        'italian': np.loadtxt('python/encoded/vec_ita.txt')
+    }
+
+    test_languages = {
+        'english_test': np.loadtxt('python/encoded/vec_en_test.txt'),
+        'french_test': np.loadtxt('python/encoded/vec_fr_test.txt'),
+        'german_test': np.loadtxt('python/encoded/vec_deu_test.txt'),
+        'spanish_test': np.loadtxt('python/encoded/vec_spa_test.txt'),
+        'italian_test': np.loadtxt('python/encoded/vec_ita_test.txt')
+    }
+
+    for test_lang_name, test_lang_vector in test_languages.items():
+        for lang_name, lang_vector in languages.items():
+            print(f"{test_lang_name} and {lang_name}: ", format(cosine_similarity(test_lang_vector, lang_vector), '.2f'))
+        print()
+
+
+testing()
+
+# french = np.loadtxt('python/encoded/vec_fr.txt')
+# english = np.loadtxt('python/encoded/vec_en.txt')
+
+# english_test = encodeSample('python/testing/eng.txt', 1000)
+# french_test = encodeSample('python/testing/fra.txt', 1000)
+
+# print(cosine_similarity(french_test, english))

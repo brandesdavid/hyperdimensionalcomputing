@@ -1,90 +1,47 @@
-# hyperdimensional computing
-
 import numpy as np
+from numpy import dot
+from numpy.linalg import norm
 
-class HDV:
-    def __init__(self, N, empty=False):
-        self.N = N
-        if empty:
-            self.hdv = np.zeros(N)
-        else:
-            self.hdv = np.random.choice([-1, 1], size=N)
-    
-    def compare(self, other):
-        return (self.hdv == other.hdv).sum()
-    
-    def Bind(self, other):
-        self.hdv = self.hdv * other.hdv
-
-    def Bundle(self, other):
-        self.hdv = np.sign(self.hdv + other.hdv)
-
-    def Shift(self, shift=1):
-        self.hdv = np.roll(self.hdv, shift)
-
-    def cosine_similarity(self, other):
-        return np.dot(self.hdv, other.hdv) / (np.linalg.norm(self.hdv) * np.linalg.norm(other.hdv))
-
-
-
-def generateHDV(N, empty=False):
+def generate_random_vector(vector_size, empty=False):
+    # Random vector generation
     if empty:
-        return np.zeros(N)
+        random_vector = np.zeros(vector_size)
     else:
-        return np.random.choice([-1, 1], size=N)
+        random_vector = np.random.choice([-1, 1], vector_size)
+       #  print(random_vector)
+    return random_vector
 
-# produce a new vector that is dissimilar to the original
-def Bind(a, b):
-    return a * b
+def bind(vector_a, vector_b):
+    # Binding operation (Hadamard product)
+    bound_vector = np.multiply(vector_a, vector_b)
+    return bound_vector
 
-# bundle two vectors together
-def Bundle(a, b):
-    sum = a + b
-    return sum
+def bundle(vectors):
+    # Bundling operation (Summation)
+    bundled_vector = np.sum(vectors, axis=0)
+    return bundled_vector
 
-def Quantize(a):
-    return a-1
+def normalize(vector):
+    # L2 normalization (Euclidean normalization)
+    norm = np.linalg.norm(vector)
+    normalized_vector = vector / norm
+    print(norm)
+    return normalized_vector
 
-# check the similarity of two hypervectors   
+def clip(vector, min_value=-1, max_value=1):
+    # Clipping operation
+    clipped_vector = np.clip(vector, min_value, max_value)
+    return clipped_vector
+
+def shift(vector, shift_value):
+    # Shifting operation
+    shifted_vector = np.roll(vector, shift_value)
+    return shifted_vector
+
 def cosine_similarity(a, b):
-    dot_product = np.dot(a, b)
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-    return dot_product / (norm_a * norm_b)
+    #check if divide by zero
+    if(norm(a) * norm(b) == 0):
+        return 0
+    else:
+        return dot(a, b)/(norm(a)*norm(b))
     
-def Shift(a, shift=1):
-    return np.roll(a, shift)
-
-def compare(a, b):
-    return (a == b).sum()
-
-x = generateHDV(5)
-y = generateHDV(5)
-
-print("x:              ", x)
-print("y:              ", y)
-
-y = Bundle(x, y)   
-print("bundling:       ", y)
-y = Quantize(y)
-print("quantizing:     ", y)
-
-# def print():
-#     x = generateHDV(N)
-#     y = generateHDV(N)
-
-#     print("x:              ", x)
-#     print("y:              ", y)
-
-#     print("comparing:      ", compare(x, y))
-#     print(" ")
-#     print("Binding:        ", Bind(x, y))
-
-#     print("reversing to x: ", Bind(Bind(x, y), y))
-#     print("x:              ", x)
-
-#     print(" ")
-#     print("x:              ", x)
-#     print("y:              ", y)
-
-#     print("bundling:       ", Bundle(x, y))
